@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Digit Draw and Predict</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+      touch-action: none;
+    }
+    #prediction {
+      font-size: 24px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Draw a digit (0-9)</h1>
+  <canvas id="draw-canvas" width="280" height="280"></canvas>
+  <div id="prediction">Prediction: -</div>
+  <button id="clear-btn">Clear</button>
+  <div id="softmax-output"></div>
+
+  <script type="module" src="./main.ts"></script>
+</body>
+</html>

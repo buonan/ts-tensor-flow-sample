@@ -1,0 +1,22 @@
+{
+  "name": "digit-draw-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "train": "node dist/main.js",
+    "debug": "node --inspect-brk dist/main.js"
+  },
+  "devDependencies": {
+    "typescript": "~5.8.3",
+    "vite": "^6.3.5"
+  },
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.22.0",
+    "@tensorflow/tfjs-node": "^4.22.0",
+    "mnist-data": "^1.2.6"
+  }
+}
