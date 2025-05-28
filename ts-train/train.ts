@@ -117,12 +117,10 @@ async function trainAndEvaluate() {
   }, {} as Record<number, number>);
   console.log('Label distribution:', labelDist);
 
-  // const model = createModel();  // working model
-  const model = cnnModel(); // better model
+  const model = createModel();  // working model
 
   await model.fit(xs, ys, {
-    //epochs: 20,
-    epochs: 30, // better or more
+    epochs: 20,
     batchSize: 64,
     validationSplit: 0.1,
     shuffle: true,
