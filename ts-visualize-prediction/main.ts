@@ -39,10 +39,6 @@ clearBtn.addEventListener('click', () => {
 });
 
 // Load your saved model hosted somewhere or local file
-// For demo: Use pre-trained mnist model from tfjs repository
-const MODEL_URL = './mnist-model/model.json'; // Change this to your model path
-//const MODEL_URL = 'https://tfhub.dev/tensorflow/tfjs-model/mnist/digit_classifier/1/default/1';
-
 let model: tf.LayersModel;
 
 async function loadModel() {
@@ -55,19 +51,7 @@ async function loadModel() {
   // model = await tf.loadLayersModel('https://tfhub.dev/tensorflow/tfjs-model/mnist/digit_classifier/1/default/1');
   // Uncomment the next line to load from a local file
   // model = await tf.loadLayersModel('file://./mnist-model/model.json');
-  // Uncomment the next line to load from TensorFlow Hub  
-  //model = await tf.loadLayersModel(MODEL_URL, { fromTFHub: true });
   predictionText.textContent = 'Model loaded! Draw a digit.';
-}
-
-function preprocessCanvas1(image: HTMLCanvasElement) {
-  // Resize to 28x28, grayscale, normalize [0,1]
-  return tf.tidy(() => {
-    const tensor = tf.browser.fromPixels(image, 1); // grayscale
-    const resized = tf.image.resizeBilinear(tensor, [28, 28]);
-    const normalized = resized.div(255.0);
-    return normalized.reshape([1, 28, 28, 1]);
-  });
 }
 
 async function preprocessCanvasSmart(canvas: HTMLCanvasElement): Promise<tf.Tensor> {

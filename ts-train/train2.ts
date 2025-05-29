@@ -89,7 +89,7 @@ async function trainAndEvaluate(): Promise<void> {
     validationSplit: 0.1,
     shuffle: true,
     callbacks: {
-      onEpochEnd: async (epoch, logs) => {
+      onEpochEnd: async (epoch:any, logs:any) => {
         const loss = logs?.loss?.toFixed(4);
         const acc = (logs?.acc ?? logs?.accuracy)?.toFixed(4);
         console.log(`Epoch ${epoch + 1}: loss=${loss}, accuracy=${acc}`);

@@ -1,5 +1,5 @@
 # Description
-This is a simple example of how to train a model to recognize 0-9 
+This is a simple example on how to train a model to recognize 0-9 
 images drawn in 28x28 bitmap using Tensor Flow JS.
 
 # Setup Vite App
