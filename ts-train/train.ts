@@ -42,47 +42,6 @@ function showAsciiImage(flatImage: number[], width = 28) {
   }
 }
 
-// Define a better model architecture
-function cnnModel() {
-  const model = tf.sequential();
-
-  // Reshape 784 -> 28x28x1
-  model.add(tf.layers.reshape({ 
-    targetShape: [28, 28, 1], 
-    inputShape: [784] 
-  }));
-
-  model.add(tf.layers.conv2d({
-    filters: 32,
-    kernelSize: 3,
-    activation: 'relu',
-    padding: 'same'
-  }));
-  model.add(tf.layers.maxPooling2d({ poolSize: [2, 2] }));
-
-  model.add(tf.layers.conv2d({
-    filters: 64,
-    kernelSize: 3,
-    activation: 'relu',
-    padding: 'same'
-  }));
-  model.add(tf.layers.maxPooling2d({ poolSize: [2, 2] }));
-
-  model.add(tf.layers.flatten());
-
-  model.add(tf.layers.dense({ units: 128, activation: 'relu' }));
-  model.add(tf.layers.dropout({ rate: 0.3 }));
-  model.add(tf.layers.dense({ units: 10, activation: 'softmax' }));
-
-  model.compile({
-    optimizer: tf.train.adam(0.001),
-    loss: 'categoricalCrossentropy',
-    metrics: ['accuracy'],
-  });
-
-  return model;
-}
-
 // Working model
 function createModel() {
   const model = tf.sequential();

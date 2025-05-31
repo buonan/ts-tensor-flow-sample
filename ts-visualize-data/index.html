@@ -1,11 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>MNIST Viewer</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    canvas { margin: 5px; border: 1px solid #ccc; }
+    #grid { display: flex; flex-wrap: wrap; justify-content: center; }
+  </style>
 </head>
 <body>
-  <h1>MNIST Digits</h1>
-  <script type="module" src="/src/main.ts"></script>
+  <h1>MNIST Test Set Viewer</h1>
+  <input type="file" id="fileInput" />
+  <div id="grid"></div>
+  <script src="viewer.js"></script>
 </body>
 </html>
