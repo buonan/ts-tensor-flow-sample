@@ -133,7 +133,7 @@ function handleImageUpload(event: Event) {
 
 async function predict() {
   if (!model) return;
-
+  predictionText.textContent = 'Predicting...';
   const input = await preprocessCanvasSmart(canvas);
   const prediction = model.predict(input) as tf.Tensor;
 

@@ -30,10 +30,12 @@ npx vite
 ```
 
 # How to run neural network prediction
-## Copy ts-train/mnist-model/ to ts-visualize-prediction/minst-model/
+## Copy ts-train/mnist-model/ or ts-train/mnist-cnn-model 
+## To ts-visualize-prediction/minst-model/
 ## Use ts-visualize-prediction
 ```
 cd ts-visualize-prediction
 npm install
-npm run dev
+npm run build
+npm run start
 ```
