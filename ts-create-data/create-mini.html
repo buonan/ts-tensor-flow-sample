@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom MNIST Dataset Creator</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.12.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+    body {
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <h1>Custom MNIST Dataset Creator</h1>
+  <canvas id="draw-canvas" width="280" height="280"></canvas>
+  <br>
+  <label>Label: <input type="number" id="digit-label" min="0" max="9" /></label>
+  <button id="save-digit">Save Digit</button>
+  <button id="clear-btn">Clear</button>
+  <button id="train">Train Model</button>
+  <button id="export-data">Export Dataset</button>
+  <div id="message"></div>
+  <div id="vis"></div>
+  
+  <script>
+    const canvas = document.getElementById('draw-canvas');
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.strokeStyle = 'black';
+    ctx.lineWidth = 20;
+    ctx.lineCap = 'round';
+
+    let isDrawing = false;
+    canvas.addEventListener('mousedown', () => isDrawing = true);
+    canvas.addEventListener('mouseup', () => { isDrawing = false; ctx.beginPath(); });
+    canvas.addEventListener('mouseout', () => { isDrawing = false; ctx.beginPath(); });
+    canvas.addEventListener('mousemove', e => {
+      if (!isDrawing) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      ctx.lineTo(x, y);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+    });
+
+    document.getElementById('clear-btn').addEventListener('click', () => {
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    });
+
+    const dataset = [];
+
+    async function preprocessCanvas() {
+      return tf.tidy(() => {
+        const tensor = tf.browser.fromPixels(canvas, 1).toFloat().div(255);
+        const resized = tf.image.resizeBilinear(tensor, [28, 28]);
+        const gray = resized.mean(2).expandDims(-1);
+        return gray.reshape([784]);
+      });
+    }
+
+    document.getElementById('save-digit').addEventListener('click', async () => {
+      const label = parseInt(document.getElementById('digit-label').value);
+      if (isNaN(label) || label < 0 || label > 9) {
+        alert("Enter digit 0-9");
+        return;
+      }
+      const img = await preprocessCanvas();
+      dataset.push({ image: img, label });
+      document.getElementById('message').innerText = `Saved: ${dataset.length} samples.`;
+    });
+
+    document.getElementById('train').addEventListener('click', async () => {
+      if (dataset.length < 10) {
+        alert("Add more samples (at least 10).");
+        return;
+      }
+
+      const xs = tf.stack(dataset.map(d => d.image));
+      const ys = tf.oneHot(tf.tensor1d(dataset.map(d => d.label), 'int32'), 10);
+
+      const model = tf.sequential();
+      model.add(tf.layers.dense({ inputShape: [784], units: 128, activation: 'relu' }));
+      model.add(tf.layers.dropout({ rate: 0.2 }));
+      model.add(tf.layers.dense({ units: 10, activation: 'softmax' }));
+
+      model.compile({ optimizer: 'adam', loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+
+      await model.fit(xs, ys, {
+        epochs: 20,
+        shuffle: true,
+        callbacks: tfvis.show.fitCallbacks(
+          { name: 'Training Performance', tab: 'Training' },
+          ['loss', 'acc'],
+          { callbacks: ['onEpochEnd'] }
+        )
+      });
+
+      document.getElementById('message').innerText = "Training complete!";
+    });
+
+    document.getElementById('export-data').addEventListener('click', async () => {
+      const data = await Promise.all(dataset.map(async ({ image, label }) => ({
+        data: Array.from(await image.data()),
+        label
+      })));
+
+      const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'mnist-dataset.json';
+      link.click();
+    });
+  </script>
+</body>
+</html>
