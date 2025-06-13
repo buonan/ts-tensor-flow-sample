@@ -14,9 +14,11 @@ npm install @tensorflow/tfjs
 ```
 cd ts-train
 npm install
+npm run build
 npm run train
+-or-
+npm run train2 (better model)
 ```
-## Copy mnist-data/ to ts-visualize-prediction
 
 # How to visualize the data
 ## Use ts-visualize-data see the mninst data
@@ -28,6 +30,7 @@ npx vite
 ```
 
 # How to run neural network prediction
+## Copy ts-train/mnist-model/ to ts-visualize-prediction/minst-model/
 ## Use ts-visualize-prediction
 ```
 cd ts-visualize-prediction

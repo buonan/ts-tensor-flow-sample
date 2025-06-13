@@ -20,6 +20,8 @@ canvas.addEventListener('pointerdown', () => { isDrawing = true; });
 canvas.addEventListener('pointerup', () => { isDrawing = false; ctx.beginPath(); predict(); });
 canvas.addEventListener('pointerout', () => { isDrawing = false; ctx.beginPath(); });
 canvas.addEventListener('pointermove', draw);
+const uploadInput = document.getElementById('upload') as HTMLInputElement;
+uploadInput.addEventListener('change', handleImageUpload);
 
 function draw(event: PointerEvent) {
   if (!isDrawing) return;
@@ -36,6 +38,11 @@ clearBtn.addEventListener('click', () => {
   ctx.fillStyle = 'white';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   predictionText.textContent = 'Prediction: -';
+  const outputDiv = document.getElementById('softmax-output')!;
+  let probs = new Float32Array(10).fill(0);
+  outputDiv.innerHTML = Array.from(probs).map((p, i) =>
+    `${i}: ${(p * 100).toFixed(2)}%`
+  ).join('<br>');
 });
 
 // Load your saved model hosted somewhere or local file
@@ -97,6 +104,31 @@ async function preprocessCanvasSmart(canvas: HTMLCanvasElement): Promise<tf.Tens
 
 
   return cropped;
+}
+
+function handleImageUpload(event: Event) {
+  const input = event.target as HTMLInputElement;
+  if (!input.files || input.files.length === 0) return;
+
+  const file = input.files[0];
+  const reader = new FileReader();
+  const img = new Image();
+
+  reader.onload = function (e) {
+    img.onload = function () {
+      // Clear the canvas
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw the uploaded image resized into the canvas
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      predict(); // Run prediction after image is drawn
+    };
+
+    img.src = e.target?.result as string;
+  };
+
+  reader.readAsDataURL(file);
 }
 
 async function predict() {
